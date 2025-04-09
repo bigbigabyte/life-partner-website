@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Life Partner</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #fef6f1, #f5e8f9);
+      color: #2e2a3b;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    h1, h2, h3, .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      color: #8a2c5a;
+    }
+    .navbar {
+      background: rgba(255, 248, 243, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .nav-link {
+      color: #8a2c5a !important;
+      transition: color 0.3s;
+    }
+    .nav-link:hover { color: #ff6f91 !important; }
+    .hero-section {
+      background: url('https://images.unsplash.com/photo-1519742866993-66d3cfef4bbd?q=80&w=1920&auto=format&fit=crop') center center/cover no-repeat;
+      color: #fff;
+      text-align: center;
+      padding: 120px 15px;
+      position: relative;
+      overflow: hidden;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(138, 44, 90, 0.6);
+      z-index: 1;
+    }
+    .hero-section h1, .hero-section p, .hero-section .form-control {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-section h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      margin-bottom: 20px;
+    }
+    .hero-section p {
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      margin-bottom: 30px;
+    }
+    section {
+      padding: 80px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    section::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      width: 80%;
+      height: 2px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="2"><path d="M0 1 Q25 5 50 1 T100 1" stroke="%23ff6f91" stroke-width="1" fill="none"/></svg>') repeat-x;
+      opacity: 0.4;
+    }
+    .card {
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(138, 44, 90, 0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+      background: #fff8f3;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 30px rgba(138, 44, 90, 0.25);
+    }
+    .card-img-top, #profileDetails img {
+      height: 220px !important;
+      width: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      -webkit-user-drag: none;
+      -moz-user-select: none;
+      user-select: none;
+      background: #e9ecef;
+    }
+    .card-img-top.loading::before, #profileDetails img.loading::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #e9ecef 25%, #f1f3f5 50%, #e9ecef 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite ease-in-out;
+      z-index: 1;
+    }
+    .card-img-top.loaded, #profileDetails img.loaded { background: none; }
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .card-body { padding: 25px; }
+    .card-title {
+      color: #8a2c5a;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    .btn-outline-primary {
+      border-color: #ff6f91;
+      color: #ff6f91;
+      border-radius: 20px;
+      padding: 8px 20px;
+    }
+    .btn-outline-primary:hover {
+      background: #ff6f91;
+      color: #fff;
+    }
+    .btn-primary, .btn-success {
+      background: #c15b9f;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      transition: background 0.3s;
+    }
+    .btn-primary:hover, .btn-success:hover { background: #9e487f; }
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 1px solid #ff9e9d;
+      padding: 12px;
+      font-size: 1rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #8a2c5a;
+      box-shadow: 0 0 5px rgba(138, 44, 90, 0.5);
+    }
+    #profiles, #profile {
+      background: rgba(255, 248, 243, 0.7);
+      border-radius: 20px;
+      margin: 0 15px;
+      padding: 60px 20px;
+    }
+    #profiles h2, #profile h2 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      position: relative;
+    }
+    #profiles h2::after {
+      content: '';
+      width: 100px;
+      height: 3px;
+      background: #ff6f91;
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    .filter-row {
+      background: #fff8f3;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-bottom: 40px;
+    }
+    #profileDetails .card {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    #profileDetails .card-body { padding: 30px; }
+    #profileDetails h3 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    #profileDetails p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    .preloader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 248, 243, 0.95);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      transition: opacity 0.5s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .preloader-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .loader {
+      position: relative;
+      width: 40px;
+      height: 60px;
+      animation: heartBeat 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    .loader:before, .loader:after {
+      content: "";
+      background: #ff3d00;
+      width: 40px;
+      height: 60px;
+      border-radius: 50px 50px 0 0;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      transform: rotate(45deg);
+      transform-origin: 50% 68%;
+      box-shadow: 5px 4px 5px #0004 inset;
+    }
+    .loader:after { transform: rotate(-45deg); }
+    .loader-text {
+      margin-top: 20px;
+      color: #8a2c5a;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(138, 44, 90, 0.2);
+    }
+    @keyframes heartBeat {
+      0% { transform: scale(0.95); }
+      5% { transform: scale(1.1); }
+      39% { transform: scale(0.85); }
+      45% { transform: scale(1); }
+      60% { transform: scale(0.95); }
+      100% { transform: scale(0.9); }
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 40px;
+    }
+    .pagination .btn {
+      background: #c15b9f;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 25px;
+      color: #fff;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    .pagination .btn:hover { background: #9e487f; }
+    .pagination .btn:disabled {
+      background: #d3d3d3;
+      cursor: not-allowed;
+    }
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 80px 10px;
+        min-height: 50vh;
+      }
+      .card { margin-bottom: 20px; }
+      .navbar-nav {
+        text-align: center;
+        padding: 10px 0;
+      }
+      section { padding: 40px 0; }
+      .hero-section h1 { font-size: clamp(2rem, 4vw, 3rem); }
+      .hero-section p { font-size: clamp(0.9rem, 2vw, 1.2rem); }
+      #profiles, #profile {
+        margin: 0 10px;
+        padding: 40px 15px;
+      }
+      .card-body { padding: 20px; }
+      .filter-row { padding: 15px; }
+    }
+    .hidden { display: none !important; }
+    body > section { padding-top: 80px; }
+    .blockquote-footer { padding-top: 10px; }
+    .search-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      margin-left: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .search-btn svg { width: 24px; height: 24px; }
+    .search-container {
+      display: flex;
+      align-items: center;
+      width: 75%;
+      margin: 0 auto;
+    }
+    @media (min-width: 768px) { .search-container { width: 50%; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="#home">Life Partner</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="navbarContent" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#profiles">Profiles</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div id="preloaderOverlay" class="preloader-overlay active">
+    <div class="loader"></div>
+    <div class="loader-text">Finding Your Love...</div>
+  </div>
+
+  <section id="home">
+    <div class="hero-section">
+      <h1>Find Your Life Partner</h1>
+      <p>Discover love with those who share your dreams.</p>
+      <div class="search-container mt-4">
+        <input type="text" id="homeSearch" class="form-control" placeholder="Search by name, location or profession">
+        <button id="homeSearchBtn" class="search-btn">
+          <svg fill="#ff6f91" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <g>
+              <path d="M475.346,78.702c-54.655-54.655-133.684-43.582-177.264,0l-37.02,37.021L224.04,78.702 c-43.582-43.582-122.609-54.655-177.264,0c-48.872,48.872-48.872,128.392,0,177.264l18.584,18.584 c-18.454,30.09-18.415,68.38,0.116,98.437L0,438.465l30.67,30.67l65.476-65.477c30.057,18.531,68.346,18.57,98.437,0.116 l66.479,66.48l214.285-214.285C524.218,207.096,524.218,127.574,475.346,78.702z M181.237,359.459 c-19.729,19.729-51.833,19.729-71.562,0c-19.729-19.729-19.729-51.833,0-71.564c19.729-19.729,51.833-19.729,71.562,0 C200.967,307.625,200.967,339.729,181.237,359.459z M444.677,225.298L261.061,408.914l-35.74-35.74 c22.456-36.234,18.003-84.531-13.414-115.947c-31.417-31.417-79.714-35.87-115.948-13.414l-18.513-18.515 c-31.961-31.961-31.961-83.964,0-115.925c30.167-30.167,82.013-33.913,115.925,0l67.691,67.691l67.691-67.691 c33.912-33.913,85.759-30.167,115.925,0C476.637,141.333,476.637,193.338,444.677,225.298z"/>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="container mt-5">
+      <h2 class="mb-4 text-center">Featured Profiles</h2>
+      <div class="row justify-content-center" id="featuredProfiles"></div>
+      <div id="homePagination" class="pagination"></div>
+      <div class="mt-5 text-center">
+        <h3>Success Stories</h3>
+        <blockquote class="blockquote">
+          <p class="mb-0">"We found our forever here. Thank you, Life Partner!"</p>
+          <footer class="blockquote-footer">A Happy Couple</footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section id="profiles" class="hidden">
+    <div class="container">
+      <h2 class="mb-4">All Profiles</h2>
+      <div class="row g-3 mb-4 justify-content-center filter-row">
+        <div class="col-md-3 col-sm-6">
+          <div class="search-container">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+            <button id="searchBtn" class="search-btn">
+              <svg fill="#ff6f91" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <g>
+                  <path d="M475.346,78.702c-54.655-54.655-133.684-43.582-177.264,0l-37.02,37.021L224.04,78.702 c-43.582-43.582-122.609-54.655-177.264,0c-48.872,48.872-48.872,128.392,0,177.264l18.584,18.584 c-18.454,30.09-18.415,68.38,0.116,98.437L0,438.465l30.67,30.67l65.476-65.477c30.057,18.531,68.346,18.57,98.437,0.116 l66.479,66.48l214.285-214.285C524.218,207.096,524.218,127.574,475.346,78.702z M181.237,359.459 c-19.729,19.729-51.833,19.729-71.562,0c-19.729-19.729-19.729-51.833,0-71.564c19.729-19.729,51.833-19.729,71.562,0 C200.967,307.625,200.967,339.729,181.237,359.459z M444.677,225.298L261.061,408.914l-35.74-35.74 c22.456-36.234,18.003-84.531-13.414-115.947c-31.417-31.417-79.714-35.87-115.948-13.414l-18.513-18.515 c-31.961-31.961-31.961-83.964,0-115.925c30.167-30.167,82.013-33.913,115.925,0l67.691,67.691l67.691-67.691 c33.912-33.913,85.759-30.167,115.925,0C476.637,141.333,476.637,193.338,444.677,225.298z"/>
+                </g>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-2 col-sm-6">
+          <select id="genderFilter" class="form-select">
+            <option value="">Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-sm-6">
+          <select id="religionFilter" class="form-select">
+            <option value="">Religion</option>
+            <option value="Hindu">Hindu</option>
+            <option value="Muslim">Muslim</option>
+            <option value="Christian">Christian</option>
+            <option value="Sikh">Sikh</option>
+            <option value="Jain">Jain</option>
+            <option value="Buddhist">Buddhist</option>
+            <option value="Parsi">Parsi</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-sm-6">
+          <select id="casteFilter" class="form-select">
+            <option value="">Caste</option>
+            <option value="General">General</option>
+            <option value="OBC">OBC</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-md-3 col-sm-12 d-grid">
+          <button id="unlockBtn" class="btn btn-success">Unlock All Profiles</button>
+        </div>
+      </div>
+      <div id="profilesContainer" class="row justify-content-center"></div>
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </section>
+
+  <section id="profile" class="hidden">
+    <div class="container" id="profileDetails"></div>
+  </section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const preloaderOverlay = $("preloaderOverlay");
+  const FALLBACK_IMAGE = 'https://via.placeholder.com/220x220.png?text=No+Image';
+  const PROFILES_PER_PAGE = 12;
+  let currentPage = 1;
+  let allProfiles = [];
+  let filteredProfiles = [];
+
+  // IndexedDB Setup
+  const dbName = "LifePartnerDB";
+  let db;
+
+  function initDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(dbName, 1);
+      request.onerror = () => {
+        console.error("IndexedDB error:", request.error);
+        reject(request.error);
+      };
+      request.onsuccess = () => {
+        db = request.result;
+        console.log("IndexedDB opened successfully");
+        resolve();
+      };
+      request.onupgradeneeded = (event) => {
+        console.log("Creating IndexedDB object store");
+        const db = event.target.result;
+        const store = db.createObjectStore("profiles", { keyPath: "id" });
+        store.createIndex("name", "name", { unique: false });
+        store.createIndex("location", "location", { unique: false });
+        store.createIndex("profession", "profession", { unique: false });
+      };
+    });
+  }
+
+  function addProfilesToDB(profiles) {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(["profiles"], "readwrite");
+      const store = transaction.objectStore("profiles");
+      profiles.forEach(profile => {
+        store.put(profile);
+      });
+      transaction.oncomplete = () => {
+        console.log("Profiles added to IndexedDB");
+        resolve();
+      };
+      transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  function getAllProfilesFromDB() {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(["profiles"], "readonly");
+      const store = transaction.objectStore("profiles");
+      const request = store.getAll();
+      request.onsuccess = () => {
+        console.log("Retrieved profiles from IndexedDB:", request.result.length);
+        resolve(request.result);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  function showPreloader() { preloaderOverlay.classList.add("active"); }
+  function hidePreloader() { preloaderOverlay.classList.remove("active"); }
+
+  async function fetchLocalProfiles() {
+    showPreloader();
+    try {
+      const response = await fetch('profiles.json');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const profiles = await response.json();
+      console.log("Fetched profiles:", profiles);
+      
+      await initDB();
+      await addProfilesToDB(profiles);
+      allProfiles = await getAllProfilesFromDB();
+      filteredProfiles = [...allProfiles];
+      console.log("Loaded profiles into memory:", allProfiles.length);
+    } catch (error) {
+      console.error("Error loading profiles:", error);
+      allProfiles = [];
+      filteredProfiles = [];
+    }
+    hidePreloader();
+    await renderProfiles("featuredProfiles");
+  }
+
+  function waitForImages(profiles) {
+    return Promise.all(profiles.map(profile => {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.src = profile.photo || FALLBACK_IMAGE;
+        img.onload = () => resolve(profile);
+        img.onerror = () => {
+          profile.photo = FALLBACK_IMAGE;
+          resolve(profile);
+        };
+      });
+    }));
+  }
+
+  function rankProfiles(filter = {}) {
+    const searchVal = (filter.search || "").toLowerCase();
+    return filteredProfiles.map(profile => {
+      let rank = 0;
+      if (searchVal) {
+        if (profile.name.toLowerCase().includes(searchVal)) rank += 3;
+        if (profile.location.toLowerCase().includes(searchVal)) rank += 2;
+        if (profile.profession.toLowerCase().includes(searchVal)) rank += 2;
+      }
+      if (filter.gender && profile.gender === filter.gender) rank += 1;
+      if (filter.religion && profile.religion === filter.religion) rank += 1;
+      if (filter.caste && profile.caste === filter.caste) rank += 1;
+      return { ...profile, rank };
+    }).sort((a, b) => b.rank - a.rank);
+  }
+
+  async function renderProfiles(containerId, filter = {}) {
+    showPreloader();
+    const container = $(containerId);
+    container.innerHTML = "";
+    console.log("Rendering profiles for:", containerId, "Filter:", filter);
+    
+    const rankedProfiles = rankProfiles(filter);
+    console.log("Ranked profiles count:", rankedProfiles.length);
+    const start = (currentPage - 1) * PROFILES_PER_PAGE;
+    const end = Math.min(start + PROFILES_PER_PAGE, rankedProfiles.length);
+    const pageProfiles = rankedProfiles.slice(start, end);
+    
+    const loadedProfiles = await waitForImages(pageProfiles);
+    console.log("Loaded profiles for render:", loadedProfiles.length);
+    
+    if (loadedProfiles.length === 0) {
+      container.innerHTML = `<p class="text-center">No profiles found.</p>`;
+    } else {
+      loadedProfiles.forEach(profile => {
+        const div = document.createElement("div");
+        div.className = "col-md-4 col-sm-6 mb-4";
+        div.innerHTML = `
+          <div class="card">
+            <img src="${profile.photo}" class="card-img-top loaded" alt="${profile.name}">
+            <div class="card-body">
+              <h5 class="card-title">${profile.name}</h5>
+              <p>Age: ${profile.age || 'N/A'} | ${profile.location || 'N/A'} | ${profile.gender || 'N/A'}</p>
+              <a href="#profile-${profile.id}" class="btn btn-outline-primary">View More</a>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+    
+    renderPagination(containerId === "profilesContainer" ? "pagination" : "homePagination", rankedProfiles.length, filter);
+    hidePreloader();
+  }
+
+  function renderPagination(paginationId, totalItems, filter) {
+    const paginationContainer = $(paginationId);
+    paginationContainer.innerHTML = "";
+    const totalPages = Math.ceil(totalItems / PROFILES_PER_PAGE);
+    const hasPrev = currentPage > 1;
+    const hasNext = currentPage < totalPages;
+
+    const createButton = (text, newPage, disabled) => {
+      const btn = document.createElement("button");
+      btn.className = "btn";
+      btn.textContent = text;
+      btn.disabled = disabled;
+      btn.addEventListener("click", async () => {
+        currentPage = newPage;
+        await renderProfiles(paginationId === "pagination" ? "profilesContainer" : "featuredProfiles", filter);
+      });
+      return btn;
+    };
+
+    if (hasPrev || hasNext) {
+      const prevBtn = createButton("Previous", currentPage - 1, !hasPrev);
+      const nextBtn = createButton("Next", currentPage + 1, !hasNext);
+      paginationContainer.appendChild(prevBtn);
+      paginationContainer.appendChild(nextBtn);
+    }
+  }
+
+  function navigate() {
+    const hash = window.location.hash.substring(1) || "home";
+    console.log("Navigating to:", hash);
+    document.querySelectorAll("section").forEach(sec => sec.classList.add("hidden"));
+    if (hash.startsWith("profile-")) {
+      $("profile").classList.remove("hidden");
+      loadProfile(parseInt(hash.split("-")[1]));
+    } else {
+      $(hash).classList.remove("hidden");
+      currentPage = 1;
+      if (hash === "home") {
+        console.log("Rendering home profiles");
+        renderProfiles("featuredProfiles");
+      }
+      if (hash === "profiles") {
+        console.log("Rendering all profiles");
+        renderProfiles("profilesContainer");
+      }
+    }
+    window.scrollTo(0, 0);
+  }
+
+  window.addEventListener("hashchange", navigate);
+  window.addEventListener("load", async () => {
+    await fetchLocalProfiles();
+    navigate();
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const homeSearch = $("homeSearch");
+    if (homeSearch) {
+      homeSearch.addEventListener("input", async () => {
+        const searchValue = homeSearch.value.trim();
+        if (!searchValue) return;
+        currentPage = 1;
+        const filter = { search: searchValue };
+        window.location.hash = "#profiles";
+        $("searchInput").value = searchValue;
+        await renderProfiles("profilesContainer", filter);
+      });
+    }
+
+    const homeSearchBtn = $("homeSearchBtn");
+    if (homeSearchBtn) {
+      homeSearchBtn.addEventListener("click", async () => {
+        const searchValue = $("homeSearch").value.trim();
+        if (!searchValue) return;
+        currentPage = 1;
+        const filter = { search: searchValue };
+        window.location.hash = "#profiles";
+        $("searchInput").value = searchValue;
+        await renderProfiles("profilesContainer", filter);
+      });
+    }
+
+    const searchBtn = $("searchBtn");
+    if (searchBtn) {
+      searchBtn.addEventListener("click", async () => {
+        currentPage = 1;
+        const filter = {
+          search: $("searchInput").value.trim(),
+          gender: $("genderFilter").value,
+          religion: $("religionFilter").value,
+          caste: $("casteFilter").value
+        };
+        await renderProfiles("profilesContainer", filter);
+      });
+    }
+
+    [$("genderFilter"), $("religionFilter"), $("casteFilter")].forEach(element => {
+      if (element) {
+        element.addEventListener("change", async () => {
+          currentPage = 1;
+          const filter = {
+            search: $("searchInput").value.trim(),
+            gender: $("genderFilter").value,
+            religion: $("religionFilter").value,
+            caste: $("casteFilter").value
+          };
+          await renderProfiles("profilesContainer", filter);
+        });
+      }
+    });
+
+    const unlockBtn = $("unlockBtn");
+    if (unlockBtn) {
+      unlockBtn.addEventListener("click", () => {
+        window.location.href = "https://wa.me/919748816809?text=Hello,%20I%20want%20to%20purchase%20full%20access%20to%20all%20profiles.";
+      });
+    }
+  });
+
+  const accessPaid = localStorage.getItem("accessPaid") === "true";
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("access") === "paid") localStorage.setItem("accessPaid", "true");
+  })();
+
+  function loadProfile(profileId) {
+    const profile = allProfiles.find(p => p.id === profileId);
+    const container = $("profileDetails");
+    if (profile) {
+      container.innerHTML = `
+        <div class="card mb-4">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="${profile.photo || FALLBACK_IMAGE}" class="img-fluid rounded-start loaded" alt="${profile.name}">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h3>${profile.name}</h3>
+                <p><strong>Age:</strong> ${profile.age || 'Not Specified'}</p>
+                <p><strong>Location:</strong> ${profile.location || 'Not Specified'}</p>
+                <p><strong>Gender:</strong> ${profile.gender || 'Not Specified'}</p>
+                <p><strong>Profession:</strong> ${profile.profession || 'Not Specified'}</p>
+                <p><strong>Education:</strong> ${profile.education || 'Not Specified'}</p>
+                <p><strong>Bio:</strong> ${profile.bio || 'No bio available'}</p>
+                ${accessPaid ? `
+                  <hr>
+                  <p><strong>Phone:</strong> ${profile.contact.phone || 'Not Available'}</p>
+                  <p><strong>Email:</strong> ${profile.contact.email || 'Not Available'}</p>
+                  <p><strong>Family Details:</strong> ${profile.contact.family || 'Not Available'}</p>
+                ` : `<button id="unlockSingle" class="btn btn-success">Unlock Profile</button>`}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      if (!accessPaid) {
+        $("unlockSingle").addEventListener("click", () => {
+          window.location.href = "https://wa.me/919748816809?text=Hello,%20I%20want%20to%20purchase%20full%20access%20to%20this%20profile.";
+        });
+      }
+    } else {
+      container.innerHTML = `<p class="text-center">Profile not found.</p>`;
+    }
+  }
+</script>
+</body>
+</html>
